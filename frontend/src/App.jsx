@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Wallet, Bell, Activity } from 'lucide-react';
+import { Wallet, Bell, Activity, HelpCircle } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import StatCard from './components/StatCard';
 import SignalTable from './components/SignalTable';
 import PriceChartModal from './components/PriceChartModal';
+import GuideOverlay from './components/GuideOverlay';
 
 function App() {
   const [activeTab, setActiveTab] = useState('scanner');
@@ -12,6 +13,7 @@ function App() {
   const [rejectedData, setRejectedData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedTicker, setSelectedTicker] = useState(null);
+  const [showGuide, setShowGuide] = useState(false);
 
   useEffect(() => {
     fetchScan();
@@ -148,7 +150,13 @@ function App() {
             <p className="text-slate-400 text-sm">Real-time Momentum Scanner • US Tech Universe</p>
           </div>
           <div className="flex gap-4">
-
+            <button
+              onClick={() => setShowGuide(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors border border-slate-700"
+            >
+              <HelpCircle size={18} />
+              <span className="text-sm font-medium">Guide</span>
+            </button>
           </div>
         </header>
 
@@ -165,6 +173,8 @@ function App() {
             onClose={() => setSelectedTicker(null)}
           />
         )}
+
+        <GuideOverlay isOpen={showGuide} onClose={() => setShowGuide(false)} />
       </main>
     </div>
   );

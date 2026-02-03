@@ -14,6 +14,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [selectedTicker, setSelectedTicker] = useState(null);
   const [showGuide, setShowGuide] = useState(false);
+  const [marketStatus, setMarketStatus] = useState('CLOSED');
 
   useEffect(() => {
     fetchScan();
@@ -33,6 +34,7 @@ function App() {
       if (res.data.candidates) {
         setData(res.data.candidates);
         setRejectedData(res.data.rejected || []);
+        if (res.data.status) setMarketStatus(res.data.status);
       } else {
         // Legacy fallback
 
@@ -147,7 +149,12 @@ function App() {
             <h1 className="text-2xl font-bold text-white">
               {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
             </h1>
-            <p className="text-slate-400 text-sm">Real-time Momentum Scanner • US Tech Universe</p>
+            <p className="text-slate-400 text-sm flex items-center gap-2">
+              Real-time Momentum Scanner • US Tech Universe •
+              <span className={`font-mono font-bold ${marketStatus === 'OPEN' ? 'text-emerald-400 animate-pulse' : 'text-slate-500'}`}>
+                MARKET {marketStatus}
+              </span>
+            </p>
           </div>
           <div className="flex gap-4">
             <button
@@ -174,7 +181,11 @@ function App() {
           />
         )}
 
-        <GuideOverlay isOpen={showGuide} onClose={() => setShowGuide(false)} />
+        <GuideOverlay
+          isOpen={showGuide}
+          onClose={() => setShowGuide(false)}
+          activeTab={activeTab}
+        />
       </main>
     </div>
   );

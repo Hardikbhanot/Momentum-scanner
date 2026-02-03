@@ -21,6 +21,26 @@ screener = Screener()
 signaller = Signaller()
 executor = Executor()
 
+import datetime
+import pytz
+
+def get_market_status():
+    # US Market Hours: 9:30 AM - 4:00 PM Eastern, Mon-Fri
+    tz = pytz.timezone('US/Eastern')
+    now = datetime.datetime.now(tz)
+    
+    # Check Weekend
+    if now.weekday() >= 5: # 5=Sat, 6=Sun
+        return 'CLOSED'
+        
+    start_time = now.replace(hour=9, minute=30, second=0, microsecond=0)
+    end_time = now.replace(hour=16, minute=0, second=0, microsecond=0)
+    
+    if start_time <= now <= end_time:
+        return 'OPEN'
+    else:
+        return 'CLOSED'
+
 @app.get("/scan")
 def run_scan():
     try:
@@ -68,6 +88,7 @@ def run_scan():
             })
             
         return {
+            'status': get_market_status(),
             'candidates': results,
             'rejected': rejected,
             'universe_size': len(screener.universe)

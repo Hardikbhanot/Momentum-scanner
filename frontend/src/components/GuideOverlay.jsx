@@ -1,58 +1,111 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronRight, ChevronLeft, HelpCircle, Activity, TrendingUp, AlertTriangle } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft, HelpCircle, Activity, TrendingUp, AlertTriangle, PieChart, List, FileText } from 'lucide-react';
 
-const GuideOverlay = ({ isOpen, onClose }) => {
+const GuideOverlay = ({ isOpen, onClose, activeTab }) => {
     const [currentStep, setCurrentStep] = useState(0);
 
-    const steps = [
-        {
-            title: "Welcome to Momentum Scanner",
-            content: "This tool helps you identify high-momentum stock setups in real-time. It scans the US Tech Universe to find breakout candidates before they run.",
-            icon: <Activity className="w-16 h-16 text-emerald-400 mb-4" />
-        },
-        {
-            title: "Understanding the Scanner",
-            content: (
-                <div className="space-y-4 text-left">
-                    <p>The main dashboard shows live signals:</p>
-                    <ul className="list-disc pl-5 space-y-2 text-slate-300">
-                        <li><strong className="text-emerald-400">BUY Signal:</strong> Stock has broken out of consolidation with volume.</li>
-                        <li><strong className="text-blue-400">SETUP:</strong> Stock is consolidating and worth watching.</li>
-                        <li><strong className="text-rose-400">Rejections:</strong> Stocks that failed the criteria (visible in Status tab).</li>
-                    </ul>
-                </div>
-            ),
-            icon: <TrendingUp className="w-16 h-16 text-blue-400 mb-4" />
-        },
-        {
-            title: "Reading the Charts",
-            content: (
-                <div className="space-y-4 text-left">
-                    <p>When you click a ticker, the Chart Modal opens. Here's what the lines mean:</p>
-                    <ul className="space-y-3 text-slate-300">
-                        <li className="flex items-center gap-3">
-                            <div className="w-8 h-1 bg-emerald-500 rounded-full"></div>
-                            <span><strong>Green Line:</strong> Current Price Action</span>
-                        </li>
-                        <li className="flex items-center gap-3">
-                            <div className="w-8 h-1 bg-blue-500 border-dashed border-t-2 border-blue-500"></div>
-                            <span><strong>Dashed Blue:</strong> 50-Day Simple Moving Average (Trend Filter)</span>
-                        </li>
-                        <li className="flex items-center gap-3">
-                            <div className="w-8 h-1 bg-amber-400 border-dashed border-t-2 border-amber-400"></div>
-                            <span><strong>Yellow Dashed:</strong> Breakout Level (Target Entry)</span>
-                        </li>
-                        <li className="flex items-center gap-3">
-                            <div className="w-8 h-1 bg-rose-500"></div>
-                            <span><strong>Red Line:</strong> Stop Loss Level (Risk Management)</span>
-                        </li>
-                    </ul>
-                </div>
-            ),
-            icon: <AlertTriangle className="w-16 h-16 text-amber-400 mb-4" />
-        }
-    ];
+    // Reset step when opening
+    useEffect(() => {
+        if (isOpen) setCurrentStep(0);
+    }, [isOpen, activeTab]);
+
+    const commonChartsStep = {
+        title: "Reading the Charts",
+        content: (
+            <div className="space-y-4 text-left">
+                <p>When you click a ticker, the Chart Modal opens. Here's what the lines mean:</p>
+                <ul className="space-y-3 text-slate-300">
+                    <li className="flex items-center gap-3">
+                        <div className="w-8 h-1 bg-emerald-500 rounded-full"></div>
+                        <span><strong>Green Line:</strong> Current Price Action</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                        <div className="w-8 h-1 bg-blue-500 border-dashed border-t-2 border-blue-500"></div>
+                        <span><strong>Dashed Blue:</strong> 50-Day SMA (Trend Filter)</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                        <div className="w-8 h-1 bg-amber-400 border-dashed border-t-2 border-amber-400"></div>
+                        <span><strong>Yellow Dashed:</strong> Breakout Level (Target Entry)</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                        <div className="w-8 h-1 bg-rose-500"></div>
+                        <span><strong>Red Line:</strong> Stop Loss Level (Risk Management)</span>
+                    </li>
+                </ul>
+            </div>
+        ),
+        icon: <AlertTriangle className="w-16 h-16 text-amber-400 mb-4" />
+    };
+
+    const contentMap = {
+        dashboard: [
+            {
+                title: "Dashboard Overview",
+                content: "This is your command center. It gives you a high-level view of market activity and your potential exposure if you take all trades.",
+                icon: <Activity className="w-16 h-16 text-emerald-400 mb-4" />
+            },
+            {
+                title: "Key Metrics",
+                content: (
+                    <div className="space-y-4 text-left">
+                        <p>Track these numbers daily:</p>
+                        <ul className="list-disc pl-5 space-y-2 text-slate-300">
+                            <li><strong>Capital at Risk:</strong> Total exposure assuming $2k risk per trade.</li>
+                            <li><strong>Active signals:</strong> Number of confirmed breakouts today.</li>
+                        </ul>
+                    </div>
+                ),
+                icon: <PieChart className="w-16 h-16 text-blue-400 mb-4" />
+            },
+            commonChartsStep
+        ],
+        scanner: [
+            {
+                title: "The Scanner",
+                content: "This is the core of the app. It scans the US Tech Universe in real-time to find stocks meeting the 'Trend + Consolidation' criteria.",
+                icon: <List className="w-16 h-16 text-emerald-400 mb-4" />
+            },
+            {
+                title: "Understanding Signals",
+                content: (
+                    <div className="space-y-4 text-left">
+                        <p>The status column tells you what to do:</p>
+                        <ul className="list-disc pl-5 space-y-2 text-slate-300">
+                            <li><strong className="text-emerald-400">BUY:</strong> Breakout confirmed. Price > Breakout Level.</li>
+                            <li><strong className="text-blue-400">SETUP:</strong> Watchlist. Price is within 5% of breaking out.</li>
+                            <li><strong className="text-slate-400">WAIT:</strong> Consolidating but not near breakout.</li>
+                        </ul>
+                    </div>
+                ),
+                icon: <TrendingUp className="w-16 h-16 text-blue-400 mb-4" />
+            },
+            commonChartsStep
+        ],
+        status: [
+            {
+                title: "Screening Audit Log",
+                content: "Wondering why a stock isn't showing up? This page explains exactly why tickers were rejected by the algorithm.",
+                icon: <FileText className="w-16 h-16 text-slate-400 mb-4" />
+            },
+            {
+                title: "Common Rejection Reasons",
+                content: (
+                    <div className="space-y-4 text-left">
+                        <ul className="list-disc pl-5 space-y-2 text-slate-300">
+                            <li><strong>Volume &lt; 300k:</strong> Stock is too illiquid.</li>
+                            <li><strong>Downtrend (Price &lt; SMA50):</strong> We only trade stocks in uptrends.</li>
+                            <li><strong>No Riser:</strong> Stock hasn't moved up 30% in the last quarter (no momentum).</li>
+                            <li><strong>Drawdown too deep:</strong> The consolidation pullback was too severe (>25%).</li>
+                        </ul>
+                    </div>
+                ),
+                icon: <AlertTriangle className="w-16 h-16 text-rose-400 mb-4" />
+            }
+        ]
+    };
+
+    const steps = contentMap[activeTab] || contentMap['dashboard'];
 
     if (!isOpen) return null;
 
@@ -77,17 +130,22 @@ const GuideOverlay = ({ isOpen, onClose }) => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/90 backdrop-blur-sm p-4"
+                onClick={onClose}
             >
                 <motion.div
-                    key={currentStep}
+                    key={`${activeTab}-${currentStep}`}
                     initial={{ x: 20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     exit={{ x: -20, opacity: 0 }}
                     transition={{ duration: 0.2 }}
                     className="bg-slate-800 border border-slate-700 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+                    onClick={e => e.stopPropagation()}
                 >
                     {/* Header */}
-                    <div className="p-4 border-b border-slate-700 flex justify-end">
+                    <div className="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/50">
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            {activeTab} Guide • {currentStep + 1}/{steps.length}
+                        </span>
                         <button
                             onClick={onClose}
                             className="text-slate-400 hover:text-white transition-colors"
@@ -131,7 +189,7 @@ const GuideOverlay = ({ isOpen, onClose }) => {
                                 onClick={handleNext}
                                 className="flex items-center px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-emerald-500/20"
                             >
-                                {currentStep === steps.length - 1 ? 'Get Started' : 'Next'}
+                                {currentStep === steps.length - 1 ? 'Finish' : 'Next'}
                                 {currentStep !== steps.length - 1 && <ChevronRight size={16} className="ml-1" />}
                             </button>
                         </div>

@@ -72,7 +72,7 @@ const GuideOverlay = ({ isOpen, onClose, activeTab }) => {
                     <div className="space-y-4 text-left">
                         <p>The status column tells you what to do:</p>
                         <ul className="list-disc pl-5 space-y-2 text-slate-300">
-                            <li><strong className="text-emerald-400">BUY:</strong> Breakout confirmed. Price > Breakout Level.</li>
+                            <li><strong className="text-emerald-400">BUY:</strong> Breakout confirmed. Price &gt; Breakout Level.</li>
                             <li><strong className="text-blue-400">SETUP:</strong> Watchlist. Price is within 5% of breaking out.</li>
                             <li><strong className="text-slate-400">WAIT:</strong> Consolidating but not near breakout.</li>
                         </ul>
@@ -96,7 +96,7 @@ const GuideOverlay = ({ isOpen, onClose, activeTab }) => {
                             <li><strong>Volume &lt; 300k:</strong> Stock is too illiquid.</li>
                             <li><strong>Downtrend (Price &lt; SMA50):</strong> We only trade stocks in uptrends.</li>
                             <li><strong>No Riser:</strong> Stock hasn't moved up 30% in the last quarter (no momentum).</li>
-                            <li><strong>Drawdown too deep:</strong> The consolidation pullback was too severe (>25%).</li>
+                            <li><strong>Drawdown too deep:</strong> The consolidation pullback was too severe (&gt;25%).</li>
                         </ul>
                     </div>
                 ),
@@ -179,8 +179,8 @@ const GuideOverlay = ({ isOpen, onClose, activeTab }) => {
                                 onClick={handlePrev}
                                 disabled={currentStep === 0}
                                 className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-colors ${currentStep === 0
-                                        ? 'text-slate-600 cursor-not-allowed'
-                                        : 'text-slate-300 hover:bg-slate-700'
+                                    ? 'text-slate-600 cursor-not-allowed'
+                                    : 'text-slate-300 hover:bg-slate-700'
                                     }`}
                             >
                                 <ChevronLeft size={16} className="mr-1" /> Back
